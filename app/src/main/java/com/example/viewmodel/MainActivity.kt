@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    TampilLayout()
                 }
             }
         }
@@ -50,7 +50,7 @@ fun TampilLayout(
                 .padding(20.dp)
                 .fillMaxSize(),
         ) {
-            TampilLayout()
+            TampilText()
         }
     }
 }
@@ -179,19 +179,10 @@ fun SelectJK(
 
 
 
-
-
-
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     ViewModelTheme {
-        Greeting("Android")
+       TampilLayout()
     }
 }
