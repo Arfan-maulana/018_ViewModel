@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.viewmodel.Data.DataForm
 import com.example.viewmodel.Data.DataSource.jenis
+import com.example.viewmodel.Data.DataSource.status
 import com.example.viewmodel.ui.theme.ViewModelTheme
 
 class MainActivity : ComponentActivity() {
@@ -61,8 +62,9 @@ fun TampilText(cobaViewModel: CobaViewModel = viewModel()){
     var textForm by remember { mutableStateOf("") }
     var phoneForm by remember { mutableStateOf("")}
     var alamatForm by remember { mutableStateOf("")}
+    var emailForm by remember { mutableStateOf("")}
 
-    val  context = LocalContext.current
+    val context = LocalContext.current
     val dataForm: DataForm
     val uiState by cobaViewModel.uiState.collectAsState()
     dataForm = uiState
@@ -97,13 +99,29 @@ fun TampilText(cobaViewModel: CobaViewModel = viewModel()){
             .padding(10.dp)
             .fillMaxWidth()
     )
+    OutlinedTextField(
+        value = emailForm,
+        onValueChange = {emailForm = it},
+        singleLine = true,
+        shape = MaterialTheme.shapes.large,
+        label = { Text(text = "Email")},
+        modifier = Modifier
+            .padding(10.dp)
+            .fillMaxWidth()
+    )
 
     SelectJK(options = jenis.map { id -> context.resources.getString(id) },
         onSelectedChanged = {
             cobaViewModel.setJenisK(it)
         })
+    PilihSK(options = status.map {id -> context.resources.getString(id) },
+        onSelectedChanged = {
+            cobaViewModel.setPilihSK(it)
+        }
+    )
+
     Button(modifier = Modifier.fillMaxWidth(),
-        onClick = {cobaViewModel.BacaData(textForm,phoneForm,alamatForm,dataForm.sex)
+        onClick = {cobaViewModel.BacaData(textForm,phoneForm,alamatForm,emailForm,dataForm.sex)
         }
     ) {
         Text(text = stringResource(R.string.submit),
@@ -116,11 +134,13 @@ fun TampilText(cobaViewModel: CobaViewModel = viewModel()){
         telponnya =cobaViewModel.Notlp ,
         jenisnya = cobaViewModel.JenisKl,
         alamatnya = cobaViewModel.alamatUsr,
+        emailnya = cobaViewModel.emailUsr,
+        statusnya = cobaViewModel.statusUsr
     )
 
 }
 @Composable
-fun TextHasil(namanya:String,telponnya:String,jenisnya:String,alamatnya:String){
+fun TextHasil(namanya:String,telponnya:String,jenisnya:String,alamatnya:String,emailnya:String,statusnya:String){
     ElevatedCard (
         elevation = CardDefaults.cardElevation(
             defaultElevation = 6.dp
@@ -134,9 +154,15 @@ fun TextHasil(namanya:String,telponnya:String,jenisnya:String,alamatnya:String){
         Text(text = "Telepon : " + telponnya,
             modifier = Modifier
                 .padding(horizontal = 10.dp, vertical = 5.dp))
+        Text(text = "Email : " + emailnya,
+            modifier = Modifier
+                .padding(horizontal = 10.dp, vertical = 5.dp))
         Text(text = "Jenis Kelamin : " + jenisnya,
             modifier = Modifier
                 .padding(horizontal = 10.dp, vertical = 5.dp))
+        Text(text = "Status :" + statusnya,
+        modifier = Modifier)
+
         Text(text = "Alamat : " + alamatnya,
             modifier = Modifier
                 .padding(horizontal = 10.dp, vertical = 5.dp))
@@ -144,16 +170,18 @@ fun TextHasil(namanya:String,telponnya:String,jenisnya:String,alamatnya:String){
     }
 
 }
+
 @Composable
 fun SelectJK(
     options: List<String>,
     onSelectedChanged: (String) -> Unit = {}) {
 
-    var selectedValue by rememberSaveable { mutableStateOf("")
+    var selectedValue by rememberSaveable {
+        mutableStateOf("")
     }
-    Column (modifier = Modifier.padding(16.dp)) {
+    Row(modifier = Modifier.padding(16.dp)) {
         options.forEach { item ->
-            Row (
+            Row(
                 modifier = Modifier.selectable(
                     selected = selectedValue == item,
                     onClick = {
@@ -162,7 +190,7 @@ fun SelectJK(
                     }
                 ),
                 verticalAlignment = Alignment.CenterVertically
-            ){
+            ) {
                 RadioButton(
                     selected = selectedValue == item,
                     onClick = {
@@ -176,9 +204,38 @@ fun SelectJK(
     }
 
 }
-
-
-
+@Composable
+fun PilihSK(
+    options: List<String>,
+    onSelectedChanged: (String) -> Unit = {}
+) {
+    var selectedValuee by rememberSaveable {
+        mutableStateOf("")
+    }
+    Row(modifier = Modifier.padding(16.dp)) {
+        options.forEach { item ->
+            Row(
+                modifier = Modifier.selectable(
+                    selected = selectedValuee == item,
+                    onClick = {
+                        selectedValuee = item
+                        onSelectedChanged(item)
+                    }
+                ),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = selectedValuee == item,
+                    onClick = {
+                        selectedValuee = item
+                        onSelectedChanged(item)
+                    }
+                )
+                Text(item)
+            }
+        }
+    }
+}
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
